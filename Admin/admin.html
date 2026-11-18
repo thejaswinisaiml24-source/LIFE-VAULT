@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LifeVault Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--v:#8b5cf6;--c:#22d3ee;--r:#fb7185;--ok:#34d399;--am:#fbbf24;--tx:#f5f3ff;--mu:#b4b0d6;--g:rgba(255,255,255,.08);--gb:rgba(255,255,255,.2)}
+*{box-sizing:border-box;margin:0}
+body{font-family:Sora,system-ui,sans-serif;color:var(--tx);background:#0a0720;min-height:100vh;overflow-x:hidden;font-size:14px}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 10% 15%,#6d28d9 0,transparent 42%),radial-gradient(circle at 90% 10%,#0e7490 0,transparent 38%),radial-gradient(circle at 60% 95%,#be185d 0,transparent 42%),#0a0720}
+.glass{background:var(--g);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);border:1px solid var(--gb);border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.hide{display:none!important}
+#login{min-height:100vh;display:grid;place-items:center;padding:18px}
+#login form{padding:34px;width:min(380px,100%);display:grid;gap:12px}
+input,select{background:rgba(255,255,255,.08);border:1px solid var(--gb);border-radius:12px;padding:11px 14px;color:#fff;font:inherit;outline:none}
+input:focus,select:focus{border-color:var(--v)}select option{color:#000}
+.btn{padding:11px 20px;border-radius:12px;border:0;background:linear-gradient(135deg,var(--v),#6366f1);color:#fff;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.o{background:var(--g);border:1px solid var(--gb)}
+.err{color:var(--r);font-size:.85rem}
+.app{display:grid;grid-template-columns:230px 1fr;gap:18px;padding:18px;min-height:100vh}
+.side{padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:18px;height:calc(100vh - 36px)}
+.side h2{padding:0 10px 14px}
+.side button{text-align:left;background:none;border:0;color:var(--mu);padding:11px 14px;border-radius:12px;font:inherit;cursor:pointer}
+.side button.on,.side button:hover{background:rgba(139,92,246,.28);color:#fff}
+.side .sp{flex:1}
+main{min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.top h1{font-size:1.5rem}
+.demo{background:rgba(251,191,36,.15);border:1px solid var(--am);color:var(--am);padding:8px 14px;border-radius:12px;font-size:.82rem;margin-bottom:14px}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}
+.kp .glass{padding:18px}.kp small{color:var(--mu)}.kp b{display:block;font-size:2rem;margin-top:4px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.card{padding:20px;margin-bottom:14px}.card h3{margin-bottom:14px;font-size:1rem}
+.row{display:grid;grid-template-columns:70px 1fr 34px;gap:10px;align-items:center;margin:9px 0;font-size:.85rem}
+.tr{height:10px;border-radius:10px;background:rgba(255,255,255,.1);overflow:hidden}.tr i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--v),var(--c))}
+.col{display:flex;align-items:flex-end;gap:10px;height:150px}
+.col div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;font-size:.75rem;color:var(--mu)}
+.col i{width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--r),#9f1239);min-height:3px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.bar input{flex:1;min-width:180px}
+.chip{padding:8px 14px;border-radius:20px;border:1px solid var(--gb);background:var(--g);color:var(--mu);cursor:pointer;font:inherit;font-size:.82rem}
+.chip.on{background:var(--v);color:#fff;border-color:var(--v)}
+.st{color:#fbbf24;letter-spacing:2px}
+.fb{padding:16px 18px;margin-bottom:10px}.fb p{margin:6px 0;color:#e9e5ff}.fb small,.mu{color:var(--mu)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72rem;background:rgba(34,211,238,.2);color:var(--c);margin-left:6px}
+.tag.r{background:rgba(251,113,133,.25);color:var(--r)}.tag.g{background:rgba(52,211,153,.2);color:var(--ok)}
+.sos{padding:18px;margin-bottom:14px;border-color:rgba(251,113,133,.6);animation:gl 2s infinite}
+@keyframes gl{50%{box-shadow:0 0 30px rgba(251,113,133,.5)}}
+.sos iframe{width:100%;height:190px;border:0;border-radius:14px;margin-top:12px;filter:saturate(.9)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--r);margin-right:8px;animation:gl 1s infinite}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:560px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.1)}th{color:var(--mu);font-weight:600;font-size:.8rem}
+.empty{padding:34px;text-align:center;color:var(--mu)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);padding:12px 20px;max-width:90vw;z-index:9}
+@media(max-width:800px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:10px}.side h2,.side .sp{display:none}.side button{white-space:nowrap}}
+/*purple3d*/
+:root{--v:#8b5cf6;--c:#c4b5fd;--r:#fb7185;--tx:#f3edff;--mu:#b8a9dd;--g:rgba(255,255,255,.07);--gb:rgba(196,181,253,.2);--bgc:#0d0720}
+:root[data-theme=light]{--v:#7c3aed;--c:#a78bfa;--tx:#1b1033;--mu:#6b5b95;--g:rgba(255,255,255,.65);--gb:rgba(124,58,237,.2);--bgc:#f6f1ff}
+body{background:var(--bgc);font-family:Inter,system-ui,sans-serif;color:var(--tx);transition:background .5s}
+.bg{background:radial-gradient(circle at 12% 18%,rgba(139,92,246,.5),transparent 42%),radial-gradient(circle at 88% 12%,rgba(196,181,253,.45),transparent 40%),radial-gradient(circle at 60% 95%,rgba(76,29,149,.5),transparent 42%),var(--bgc)}
+h1,h2{font-family:"Dancing Script",cursive}.side h2{font-size:2.1rem;color:var(--v)}.top h1{font-size:2.6rem}
+input,select{color:var(--tx)}select option{color:#000}
+.side button.on,.side button:hover{background:rgba(139,92,246,.22);color:var(--tx)}
+.tr{background:rgba(139,92,246,.18)}.fb p{color:var(--tx)}th,td{border-bottom:1px solid var(--gb)}
+.kp,.two{perspective:1000px}.kp .glass,.glass.card,.fb{transition:transform .2s,box-shadow .3s;transform-style:preserve-3d}
+.kp .glass:hover{box-shadow:0 24px 50px rgba(139,92,246,.35)}.kp b{transform:translateZ(28px);font-family:"Dancing Script",cursive;font-size:2.6rem}
+.mini{display:inline-block;width:20px;height:20px;margin-right:12px;vertical-align:middle;transform-style:preserve-3d;animation:ms 8s linear infinite}
+.mini i{position:absolute;inset:0;border:1.5px solid var(--v);background:rgba(139,92,246,.25);border-radius:4px}
+.mini i:nth-child(1){transform:translateZ(10px)}.mini i:nth-child(2){transform:rotateY(90deg) translateZ(10px)}.mini i:nth-child(3){transform:rotateY(180deg) translateZ(10px)}.mini i:nth-child(4){transform:rotateY(-90deg) translateZ(10px)}
+@keyframes ms{to{transform:rotateX(360deg) rotateY(360deg)}}
+.tb{width:40px;padding:8px 0;text-align:center}
+</style>
+</head>
+<body>
+<script>try{var t=localStorage.getItem("lv");document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light")}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<div class="bg"></div>
+
+<div id="login" class="hide">
+<form class="glass" id="lf">
+<h2>LifeVault Admin</h2><p class="mu">Sign in with your admin account.</p>
+<input id="em" type="email" placeholder="Admin email" required autocomplete="username">
+<input id="pw" type="password" placeholder="Password" required autocomplete="current-password">
+<div class="err" id="le"></div>
+<button class="btn">Sign in</button>
+<a class="mu" href="index.html">Back to website</a>
+</form>
+</div>
+
+<div class="app hide" id="app">
+<aside class="glass side">
+<h2><span class="mini"><i></i><i></i><i></i><i></i></span>LifeVault</h2>
+<button data-t="dash" class="on">Dashboard</button>
+<button data-t="sos">Live SOS</button>
+<button data-t="fb">Feedback</button>
+<button data-t="users">Users</button>
+<button data-t="con">Contacts and Nominees</button>
+<div class="sp"></div>
+<button id="out">Sign out</button>
+</aside>
+<main>
+<div class="top"><h1 id="ttl">Dashboard</h1><div><button class="btn o tb" id="thm" aria-label="Toggle theme">&#9680;</button> <a class="btn o" href="index.html">Website</a></div></div>
+<div class="demo hide" id="demo">Demo data is showing. Add your Firebase config at the top of this file's script to see real data.</div>
+
+<section id="t-dash">
+<div class="kp" id="kp"></div>
+<div class="two">
+<div class="glass card"><h3>Rating breakdown</h3><div id="c-rate"></div></div>
+<div class="glass card"><h3>SOS alerts, last 7 days</h3><div class="col" id="c-sos"></div></div>
+</div>
+<div class="glass card"><h3>Latest feedback</h3><div id="d-fb"></div></div>
+</section>
+
+<section id="t-sos" class="hide"><div id="l-sos"></div></section>
+
+<section id="t-fb" class="hide">
+<div class="bar" id="f-star"></div>
+<div class="bar"><input id="f-q" placeholder="Search reviews or emails"><select id="f-src"><option value="">All sources</option><option value="settings">Settings</option><option value="sos">After SOS</option></select></div>
+<div id="l-fb"></div>
+</section>
+
+<section id="t-users" class="hide">
+<div class="bar"><input id="u-q" placeholder="Search by name, email or phone"></div>
+<div class="glass tw" id="l-users"></div>
+</section>
+
+<section id="t-con" class="hide">
+<div class="bar" id="c-type"></div>
+<div class="bar"><input id="c-q" placeholder="Search by name, phone or owner"></div>
+<div class="glass tw" id="l-con"></div>
+</section>
+</main>
+</div>
+<div id="toast" class="glass hide"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,collectionGroup,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ===== PASTE YOUR FIREBASE WEB CONFIG HERE (Firebase Console > Project settings > Your apps > Web) ===== */
+const cfg={apiKey:"AIzaSyCymd4bJ5eC_3s9usjWH63qR3-nzPeK9bc",authDomain:"lifevault-5d49e.firebaseapp.com",projectId:"lifevault-5d49e",storageBucket:"lifevault-5d49e.firebasestorage.app",messagingSenderId:"112312546641",appId:"1:112312546641:web:cb26aa8f4e374ce3b68f70"};
+/* ========================================================================================================= */
+
+const DEMO=cfg.apiKey.startsWith("YOUR");
+const app=DEMO?null:initializeApp(cfg);
+const S={users:[],fb:[],sos:[],acts:[],con:[],nom:[]};
+const F={star:0,src:"",q:"",uq:"",ctype:"all",cq:""};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const stars=n=>"★".repeat(n)+"☆".repeat(5-n);
+const nm=u=>u.fullName||u.name||u.email||u.id||"Unknown";
+const owner=id=>{const u=S.users.find(x=>x.id===id);return u?nm(u):"Unknown user"};
+const fdate=t=>t?new Date(t).toLocaleString([], {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}):"-";
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.remove("hide");clearTimeout(toast.x);toast.x=setTimeout(()=>t.classList.add("hide"),6000)};
+const empty=m=>'<div class="empty">'+m+'</div>';
+const tab=t=>{
+  document.querySelectorAll("main section").forEach(s=>s.classList.toggle("hide",s.id!=="t-"+t));
+  document.querySelectorAll(".side [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  $("#ttl").textContent={dash:"Dashboard",sos:"Live SOS Monitor",fb:"Feedback",users:"Users",con:"Contacts and Nominees"}[t];
+};
+document.querySelectorAll(".side [data-t]").forEach(b=>b.onclick=()=>tab(b.dataset.t));
+
+function chips(el,opts,key,cur){
+  el.innerHTML=opts.map(o=>'<button class="chip'+(String(cur)===String(o[0])?" on":"")+'" data-v="'+o[0]+'">'+o[1]+'</button>').join("");
+  el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{F[key]=key==="star"?+b.dataset.v:b.dataset.v;render()});
+}
+
+function render(){
+  const fb=[...S.fb].sort((a,b)=>(b.createdAtEpochMillis||0)-(a.createdAtEpochMillis||0));
+  const rated=fb.filter(f=>f.rating>0);
+  const avg=rated.length?(rated.reduce((a,f)=>a+f.rating,0)/rated.length):0;
+  const active=S.sos.filter(s=>s.active);
+  const alerts=S.acts.filter(a=>/sos/i.test(a.description||""));
+
+  $("#kp").innerHTML=[
+    ["Total users",S.users.length],["Active SOS now",active.length],["SOS alerts",alerts.length],
+    ["Average rating",avg?avg.toFixed(1)+" ★":"-"],["Feedback received",fb.length],["Contacts and nominees",S.con.length+S.nom.length]
+  ].map(k=>'<div class="glass"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>').join("");
+
+  const mx=Math.max(1,...[5,4,3,2,1].map(n=>rated.filter(f=>f.rating===n).length));
+  $("#c-rate").innerHTML=[5,4,3,2,1].map(n=>{const c=rated.filter(f=>f.rating===n).length;
+    return '<div class="row"><span class="st">'+n+' ★</span><div class="tr"><i style="width:'+(c/mx*100)+'%"></i></div><b>'+c+'</b></div>'}).join("");
+
+  const days=[...Array(7)].map((_,k)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(6-k));return d});
+  const cnt=days.map(d=>alerts.filter(a=>a.timestamp>=d.getTime()&&a.timestamp<d.getTime()+864e5).length);
+  const cm=Math.max(1,...cnt);
+  $("#c-sos").innerHTML=days.map((d,k)=>'<div><span>'+cnt[k]+'</span><i style="height:'+(cnt[k]/cm*100)+'%"></i><span>'+d.toLocaleDateString([], {weekday:"short"})+'</span></div>').join("");
+
+  $("#d-fb").innerHTML=fb.slice(0,4).map(fbCard).join("")||empty("No feedback yet.");
+
+  $("#l-sos").innerHTML=active.length?active.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).map(s=>{
+    const has=s.latitude!=null&&s.longitude!=null;
+    return '<div class="glass sos"><b><span class="dot"></span>'+esc(owner(s.uid))+' needs help</b><p class="mu">Started '+fdate(s.startedAt)+' - last update '+fdate(s.updatedAt)+'</p>'+
+    (has?'<p>'+(+s.latitude).toFixed(5)+', '+(+s.longitude).toFixed(5)+'</p><a class="btn" target="_blank" rel="noopener" href="https://maps.google.com/?q='+s.latitude+','+s.longitude+'">Open in Google Maps</a><iframe loading="lazy" src="https://maps.google.com/maps?q='+s.latitude+','+s.longitude+'&z=16&output=embed"></iframe>':'<p class="mu">Waiting for location...</p>')+'</div>'
+  }).join(""):'<div class="glass">'+empty("No one has an active SOS right now. This page updates live.")+'</div>';
+
+  chips($("#f-star"),[[0,"All"],[5,"5 ★"],[4,"4 ★"],[3,"3 ★"],[2,"2 ★"],[1,"1 ★"]],"star",F.star);
+  const q=F.q.toLowerCase();
+  const fl=fb.filter(f=>(!F.star||f.rating===F.star)&&(!F.src||f.source===F.src)&&(!q||((f.review||"")+(f.email||"")).toLowerCase().includes(q)));
+  $("#l-fb").innerHTML=fl.map(fbCard).join("")||'<div class="glass">'+empty("No feedback matches these filters.")+'</div>';
+
+  const uq=F.uq.toLowerCase();
+  const ul=S.users.filter(u=>!uq||[nm(u),u.email,u.phone,u.phoneNumber].join(" ").toLowerCase().includes(uq));
+  $("#l-users").innerHTML=ul.length?'<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Contacts</th><th>Nominees</th><th>SOS</th></tr>'+ul.map(u=>{
+    const on=active.some(s=>s.uid===u.id);
+    return '<tr><td>'+esc(nm(u))+'</td><td>'+esc(u.email||"-")+'</td><td>'+esc(u.phone||u.phoneNumber||"-")+'</td><td>'+S.con.filter(c=>c.uid===u.id).length+'</td><td>'+S.nom.filter(c=>c.uid===u.id).length+'</td><td>'+(on?'<span class="tag r">ACTIVE</span>':'<span class="tag g">Safe</span>')+'</td></tr>'}).join("")+'</table>':empty("No users found.");
+
+  chips($("#c-type"),[["all","All ("+(S.con.length+S.nom.length)+")"],["con","Trusted contacts ("+S.con.length+")"],["nom","Nominees ("+S.nom.length+")"]],"ctype",F.ctype);
+  const cq=F.cq.toLowerCase();
+  const rows=[...S.con.map(c=>({k:"Contact",o:c.uid,n:c.name,p:c.phone,r:c.relationship})),...S.nom.map(c=>({k:"Nominee",o:c.uid,n:c.fullName||c.name,p:c.phoneNumber||c.phone,r:c.relationship}))]
+    .filter(r=>(F.ctype==="all"||(F.ctype==="con")===(r.k==="Contact"))&&(!cq||[r.n,r.p,owner(r.o)].join(" ").toLowerCase().includes(cq)));
+  $("#l-con").innerHTML=rows.length?'<table><tr><th>Type</th><th>Name</th><th>Phone</th><th>Relationship</th><th>Belongs to</th></tr>'+rows.map(r=>'<tr><td><span class="tag'+(r.k==="Nominee"?"":" g")+'">'+r.k+'</span></td><td>'+esc(r.n||"-")+'</td><td>'+esc(r.p||"-")+'</td><td>'+esc(r.r||"-")+'</td><td>'+esc(owner(r.o))+'</td></tr>').join("")+'</table>':empty("No contacts or nominees found.");
+}
+function fbCard(f){
+  return '<div class="glass fb"><span class="st">'+stars(f.rating||0)+'</span><span class="tag">'+esc(f.source||"app")+'</span><p>'+(f.review?esc(f.review):'<span class="mu">No written review</span>')+'</p><small>'+esc(f.email||"anonymous")+' - '+fdate(f.createdAtEpochMillis)+'</small></div>';
+}
+$("#f-q").oninput=e=>{F.q=e.target.value;render()};
+$("#f-src").onchange=e=>{F.src=e.target.value;render()};
+$("#u-q").oninput=e=>{F.uq=e.target.value;render()};
+$("#c-q").oninput=e=>{F.cq=e.target.value;render()};
+
+function startApp(){$("#login").classList.add("hide");$("#app").classList.remove("hide");render()}
+
+function demoData(){
+  const n=Date.now(),d=864e5;
+  S.users=[["u1","Deepthi Shree S","deepthi@example.com","9876500001"],["u2","Ishwarya A","ishwarya@example.com","9876500002"],["u3","Thanga Kaviya G","kaviya@example.com","9876500003"],["u4","Thejaswini S","theja@example.com","9876500004"],["u5","Ravi Kumar","ravi@example.com","9876500005"]].map(a=>({id:a[0],fullName:a[1],email:a[2],phone:a[3]}));
+  S.fb=[[5,"Live SOS location worked perfectly during our test.","settings"],[4,"Clean UI. Nominee access is a great idea.","settings"],[5,"Felt safe knowing my family gets my location.","sos"],[3,"Medicine reminders could have more options.","settings"],[5,"User manual made everything easy.","settings"],[4,"Fast SMS delivery.","sos"]].map((a,k)=>({id:"f"+k,rating:a[0],review:a[1],source:a[2],email:S.users[k%5].email,createdAtEpochMillis:n-k*d/2}));
+  S.sos=[{uid:"u2",active:true,latitude:10.9505,longitude:78.7458,startedAt:n-6e5,updatedAt:n-1e4},{uid:"u4",active:false,updatedAt:n-d}];
+  S.acts=[0,0,1,1,1,2,3,5,6].map(k=>({uid:"u"+(k%4+1),description:"SOS alert triggered",timestamp:n-k*d}));
+  S.con=[["u1","Mother","9811100001","Mother"],["u1","Anitha","9811100002","Friend"],["u2","Father","9811100003","Father"],["u3","Sister","9811100004","Sister"]].map(a=>({uid:a[0],name:a[1],phone:a[2],relationship:a[3]}));
+  S.nom=[["u1","Shree Devi","9822200001","Mother"],["u2","Arun","9822200002","Brother"],["u4","Meena","9822200003","Mother"]].map(a=>({uid:a[0],fullName:a[1],phoneNumber:a[2],relationship:a[3]}));
+}
+
+function live(){
+  const db=getFirestore(app);
+  const par=d=>d.ref.parent.parent?d.ref.parent.parent.id:"";
+  const sub=(q,k,m)=>onSnapshot(q,s=>{S[k]=s.docs.map(m);render()},e=>toast(e.code==="permission-denied"?"Permission denied. Publish the admin Firestore rules and sign in with the admin email.":"Could not load "+k+": "+e.message));
+  sub(collection(db,"users"),"users",d=>({id:d.id,...d.data()}));
+  sub(collection(db,"feedback"),"fb",d=>({id:d.id,...d.data()}));
+  sub(collectionGroup(db,"sos"),"sos",d=>({uid:par(d),...d.data()}));
+  sub(collectionGroup(db,"activities"),"acts",d=>({uid:par(d),...d.data()}));
+  sub(collectionGroup(db,"trustedContacts"),"con",d=>({uid:par(d),...d.data()}));
+  sub(collectionGroup(db,"nominees"),"nom",d=>({uid:par(d),...d.data()}));
+}
+
+if(DEMO){
+  $("#demo").classList.remove("hide");demoData();startApp();
+  $("#out").onclick=()=>toast("Demo mode: nothing to sign out of.");
+}else{
+  const auth=getAuth(app);
+  $("#login").classList.remove("hide");
+  let started=false;
+  onAuthStateChanged(auth,u=>{if(u&&!started){started=true;startApp();live()}});
+  $("#lf").onsubmit=async e=>{e.preventDefault();$("#le").textContent="";
+    try{await signInWithEmailAndPassword(auth,$("#em").value.trim(),$("#pw").value)}
+    catch(x){$("#le").textContent="Sign in failed. Check the email and password."}};
+  $("#out").onclick=async()=>{await signOut(auth);location.reload()};
+}
+</script>
+<script>
+document.addEventListener("click",e=>{if(e.target.closest("#thm")){const R=document.documentElement;R.dataset.theme=R.dataset.theme=="dark"?"light":"dark";try{localStorage.setItem("lv",R.dataset.theme)}catch(x){}}});
+document.addEventListener("pointermove",e=>{const c=e.target.closest(".kp .glass,.glass.card");if(!c)return;const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform="perspective(700px) rotateY("+x*14+"deg) rotateX("+(-y*14)+"deg) translateZ(8px)"});
+document.addEventListener("pointerout",e=>{const c=e.target.closest&&e.target.closest(".kp .glass,.glass.card");if(c)c.style.transform=""});
+</script>
+</body>
+</html>
